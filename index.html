@@ -6,6 +6,12 @@
     <title>בניית אתר עם Claude Code — מ-א׳ עד ת׳</title>
     <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        @font-face {
+            font-family: 'OhYaelLeibushor';
+            src: url('assets/OHYaelLeibushor1.0-Regular.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
         /* ===== משתנים גלובליים ===== */
         :root {
             --teal:         #00b09b;
@@ -384,6 +390,12 @@
         .v-btn.back { background:none; border:2px solid rgba(0,0,0,0.14); color:#777; font-size:0.85rem; }
         .v-btn:active { transform:scale(0.97); }
 
+        /* ===== Confetti Canvas ===== */
+        #confetti-canvas {
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            pointer-events:none; z-index:9999;
+        }
+
         /* ===== Completion ===== */
         .completion {
             display:none; min-height:100vh;
@@ -396,6 +408,14 @@
         .completion-emoji { font-size:4rem; margin-bottom:1.25rem; display:block; }
         .completion h2 { font-size:clamp(2rem,5vw,3rem); font-weight:900; margin-bottom:0.75rem; }
         .completion p  { font-size:1.05rem; color:#555; margin-bottom:2rem; }
+        .handwritten {
+            font-family:'OhYaelLeibushor', cursive;
+            font-size:clamp(2.4rem,6vw,3.8rem);
+            color:var(--coral);
+            line-height:1.2;
+            margin-bottom:1rem;
+            display:block;
+        }
         .completion-actions { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
         .completion-btn {
             padding:12px 30px; border-radius:50px;
@@ -1487,6 +1507,8 @@
     </div>
 </div>
 
+<canvas id="confetti-canvas"></canvas>
+
 <!-- Completion -->
 <section class="completion" id="completion">
     <div class="logo-bar" style="position:fixed;top:0;left:0;right:0;z-index:500;">
@@ -1494,10 +1516,10 @@
     </div>
     <div class="completion-content">
         <img src="assets/images/iris-profile.jpg" alt="Iris" style="width:160px;height:160px;border-radius:50%;object-fit:cover;object-position:top;margin-bottom:1.2rem;box-shadow:0 8px 32px rgba(0,0,0,0.15);">
-        <h2>האתר שלכם חי!</h2>
+        <span class="handwritten">!כל הכבוד</span>
+        <h2>האתר שלכם באוויר</h2>
         <p>בניתם אתר מלא עם מסד נתונים אמיתי, צ׳אטבוט AI ופרסום לאינטרנט — כשקלוד קוד עשה את הקוד ואתם ניהלתם את התהליך.</p>
         <div class="completion-actions">
-            <a class="completion-btn primary" href="index.html">← חזרה למדריכים</a>
             <button class="completion-btn secondary" onclick="restartTutorial()">חזרה להתחלה</button>
         </div>
     </div>
@@ -1677,14 +1699,70 @@
         if (el) el.textContent = `${done} / ${total} הושלמו`;
     }
 
+    /* ===== confetti ===== */
+    let confettiAnim = null;
+    function startConfetti() {
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        const colors = ['#db7757','#00b09b','#f5b400','#9deee5','#ff6b9d','#6c63ff','#ffd166','#06d6a0'];
+        const pieces = Array.from({length:160}, () => ({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * -window.innerHeight,
+            r: Math.random() * 7 + 4,
+            d: Math.random() * 3 + 1,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            tilt: Math.random() * 10 - 5,
+            tiltSpeed: Math.random() * 0.1 + 0.05,
+            angle: 0,
+            shape: Math.random() > 0.5 ? 'rect' : 'circle'
+        }));
+
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        resize();
+        window.addEventListener('resize', resize);
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            pieces.forEach(p => {
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.angle * Math.PI / 180);
+                ctx.fillStyle = p.color;
+                if (p.shape === 'rect') {
+                    ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 1.6);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, p.r / 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+                p.y += p.d;
+                p.angle += p.tiltSpeed * 3;
+                if (p.y > canvas.height + 10) {
+                    p.y = -10;
+                    p.x = Math.random() * canvas.width;
+                }
+            });
+            confettiAnim = requestAnimationFrame(draw);
+        }
+        draw();
+    }
+    function stopConfetti() {
+        if (confettiAnim) { cancelAnimationFrame(confettiAnim); confettiAnim = null; }
+        const canvas = document.getElementById('confetti-canvas');
+        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+    }
+
     /* ===== completion ===== */
     function showCompletion() {
         document.getElementById('app').style.display = 'none';
         document.getElementById('bottomNav').style.display = 'none';
         document.getElementById('completion').classList.add('visible');
+        startConfetti();
     }
 
     function restartTutorial() {
+        stopConfetti();
         document.getElementById('completion').classList.remove('visible');
         document.getElementById('app').style.display = 'flex';
         const nav = document.getElementById('bottomNav');
