@@ -1526,6 +1526,12 @@
 </section>
 
 <script>
+    /* הפעלת הסרטון — fallback לדפדפנים שחוסמים autoplay */
+    document.addEventListener('DOMContentLoaded', () => {
+        const v = document.querySelector('.hero-video');
+        if (v) { v.muted = true; v.play().catch(() => {}); }
+    });
+
     /* ===== state ===== */
     let currentStep = 1;
     const totalSteps = 8;
