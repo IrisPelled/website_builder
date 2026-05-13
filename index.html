@@ -644,6 +644,13 @@
                      שלב 0 — נקודת פתיחה
                 ══════════════════════════════════════ -->
                 <div class="step active" id="step1">
+                    <div style="background:rgba(0,176,155,0.07);border-right:4px solid var(--teal);border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1.5rem;">
+                        <p style="font-size:1rem;color:#333;line-height:1.8;margin:0;">
+                            במדריך הזה תבנו אתר אמיתי עם מסד נתונים, צ׳אטבוט AI ופרסום לאינטרנט — <strong>בלי לכתוב קוד בעצמכם.</strong><br>
+                            Claude Code כותב את הקוד, ואתם מנהלים את התהליך: מחליטים מה לבנות, מאשרים, בודקים ומכוונים.<br>
+                            עקבו אחרי 5 הפאזות — כל שלב מסתיים עם תוצאה ברורה שאפשר לראות ולגעת בה.
+                        </p>
+                    </div>
                     <div class="step-header">
                         <span class="step-number">שלב 0</span>
                         <h2 class="step-title">נקודת הפתיחה — מה מכינים מראש</h2>
@@ -1540,12 +1547,6 @@
     /* ===== verifications ===== */
     const VERIF = {
         1: { icon:'📁', q:'תיקיית הפרויקט מוכנה עם plan.md, כל קבצי הפאזות, design.md, תמונות ולוגו?' },
-        2: { icon:'🔑', q:'לחצתם Copy ב-Connect? הדבקתם ב-.env.local ושמרתם עם Ctrl+S?' },
-        3: { icon:'🗄️', q:'פתחו את Supabase ובחרו Table Editor בתפריט השמאלי. האם הטבלאות קיימות?' },
-        4: { icon:'🖥️', q:'האתר עולה ב-localhost:3000 ונראה כמו שרציתם? הטופס עובד?' },
-        5: { icon:'🤖', q:'הצ׳אטבוט מופיע? לחצו עליו ושאלו שאלה — הוא עונה בהתבסס על services.md?' },
-        6: { icon:'🔐', q:'הרצתם את ה-SQL ב-Vault? הוספתם service_role key ל-.env.local ושמרתם?' },
-        7: { icon:'🚀', q:'האתר חי ב-Vercel? Supabase URL Configuration מוגדר?' },
     };
 
     /* ===== checklist ===== */
